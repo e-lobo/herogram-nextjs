@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import {
   FileIcon,
   ImageIcon,
-  TrashIcon,
+  // TrashIcon,
   DownloadIcon,
   UploadIcon,
   LinkIcon,
@@ -52,17 +52,17 @@ export default function FileView() {
     }
   };
 
-  const handleDelete = async (fileId: string) => {
-    try {
-      await FileService.deleteFile(fileId);
-      toast.success("File deleted successfully");
-      fetchFiles();
-    } catch (error) {
-      console.error("Delete failed:", error);
-      // console.error("Delete failed:", error);
-      // toast.error("Delete failed");
-    }
-  };
+  // const handleDelete = async (fileId: string) => {
+  //   try {
+  //     await FileService.deleteFile(fileId);
+  //     toast.success("File deleted successfully");
+  //     fetchFiles();
+  //   } catch (error) {
+  //     console.error("Delete failed:", error);
+  //     // console.error("Delete failed:", error);
+  //     // toast.error("Delete failed");
+  //   }
+  // };
 
   const fetchShareStats = async (fileId: string) => {
     try {
@@ -209,12 +209,15 @@ export default function FileView() {
               >
                 <DownloadIcon className="w-4 h-4" />
               </button>
+               {/*
               <button
+                disabled
                 onClick={() => handleDelete(file.id)}
                 className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
               >
                 <TrashIcon className="w-4 h-4" />
               </button>
+              */}
               <button
                 onClick={async () => {
                   const link = await handleCreateShareLink(file.id);
