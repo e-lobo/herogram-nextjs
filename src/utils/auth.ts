@@ -2,7 +2,7 @@ import { config } from "@/config";
 import type { User } from "@/types/api";
 
 export const setToken = (token: string): void => {
-  document.cookie = `${config.jwtCookieName}=${token}; path=/; max-age=${config.cookieMaxAge}; SameSite=Lax; Secure`;
+  document.cookie = `${config.jwtCookieName}=${token}; path=/; max-age=${config.cookieMaxAge}; SameSite=Lax`;
 };
 
 export const getToken = (): string | null => {
