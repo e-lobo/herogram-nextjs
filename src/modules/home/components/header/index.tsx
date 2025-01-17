@@ -14,7 +14,7 @@ export default function Header() {
     const fetchUser = async () => {
       try {
         const token = getToken();
-        const response = await fetch(`${config.apiUrl}/api/v1/auth/me`, {
+        const response = await fetch(`${config.apiUrl}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
