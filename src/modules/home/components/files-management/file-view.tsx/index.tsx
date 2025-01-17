@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import {
   FileIcon,
   ImageIcon,
-  // TrashIcon,
   DownloadIcon,
   UploadIcon,
   LinkIcon,
+  TagIcon,
 } from "lucide-react";
 import FileService from "@/services/FileService";
 import { config } from "@/config";
@@ -22,10 +22,42 @@ export default function FileView() {
   const [shareStats, setShareStats] = useState<Record<string, ShareStats[]>>(
     {}
   );
+  const [newTags, setNewTags] = useState<Record<string, string>>({});
+  const [isAddingTags, setIsAddingTags] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchFiles();
   }, []);
+
+  const handleAddTags = async (fileId: string) => {
+    const tagsInput = newTags[fileId];
+    if (!tagsInput?.trim()) {
+      toast.error("Please enter tags");
+      return;
+    }
+
+    const tags = tagsInput
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag);
+
+    try {
+      setIsAddingTags((prev) => ({ ...prev, [fileId]: true }));
+      await FileService.createTags(fileId, tags);
+
+      // refetch files to get updated tags
+      fetchFiles();
+
+      // Clear the input
+      setNewTags((prev) => ({ ...prev, [fileId]: "" }));
+      toast.success("Tags added successfully");
+    } catch (error) {
+      console.error("Failed to add tags:", error);
+      toast.error("Failed to add tags");
+    } finally {
+      setIsAddingTags((prev) => ({ ...prev, [fileId]: false }));
+    }
+  };
 
   const fetchFiles = async () => {
     try {
@@ -202,6 +234,42 @@ export default function FileView() {
               <p>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
               <p>{new Date(file.createdAt).toLocaleDateString()}</p>
             </div>
+
+            {/* Add Tags Section */}
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-2 mb-2">
+                {file.tags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    {tag.name},
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newTags[file.id] || ""}
+                  onChange={(e) =>
+                    setNewTags((prev) => ({
+                      ...prev,
+                      [file.id]: e.target.value,
+                    }))
+                  }
+                  placeholder="Add tags (comma-separated)"
+                  className="flex-1 px-2 py-1 border rounded-md text-sm"
+                />
+                <button
+                  onClick={() => handleAddTags(file.id)}
+                  disabled={isAddingTags[file.id]}
+                  className="p-2 text-blue-500 hover:bg-blue-50 rounded-md transition-colors"
+                >
+                  <TagIcon className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => handleDownload(file.id, file.originalName)}
@@ -209,7 +277,7 @@ export default function FileView() {
               >
                 <DownloadIcon className="w-4 h-4" />
               </button>
-               {/*
+              {/*
               <button
                 disabled
                 onClick={() => handleDelete(file.id)}

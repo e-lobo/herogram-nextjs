@@ -43,6 +43,13 @@ export interface FileResponse {
   createdAt: string;
   updatedAt: string;
   uploadedBy: string;
+  tags: {
+    id: string;
+    name: string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }
 
 export interface FetchFilesResponse {

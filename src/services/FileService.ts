@@ -1,6 +1,11 @@
 import { config } from "@/config";
 import { getToken } from "@/utils/auth";
-import { ApiErrorInterface, FetchFilesResponse, ShareStatsResponse } from "@/types/api";
+import {
+  ApiErrorInterface,
+  FetchFilesResponse,
+  FileResponse,
+  ShareStatsResponse,
+} from "@/types/api";
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -78,17 +83,30 @@ class FileService {
     });
   }
 
-  static async createShareLink(fileId: string): Promise<{ data: { url: string } }> {
+  static async createShareLink(
+    fileId: string
+  ): Promise<{ data: { url: string } }> {
     return this.fetchApi(`/files/share/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fileId, expirationHours: 1 }),
     });
   }
-  
+
   static async getShareStats(fileId: string): Promise<ShareStatsResponse> {
     return this.fetchApi(`/files/share-stats/${fileId}`, {
       method: "GET",
+    });
+  }
+
+  static async createTags(
+    fileId: string,
+    tags: string[]
+  ): Promise<{ data: FileResponse }> {
+    return this.fetchApi(`/files/${fileId}/tags`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tags }),
     });
   }
 }
