@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/api";
 import { getToken, removeToken } from "@/utils/auth";
+import { config } from "@/config";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,7 +14,7 @@ export default function Header() {
     const fetchUser = async () => {
       try {
         const token = getToken();
-        const response = await fetch("http://localhost:4000/api/v1/auth/me", {
+        const response = await fetch(`${config.apiUrl}/api/v1/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
